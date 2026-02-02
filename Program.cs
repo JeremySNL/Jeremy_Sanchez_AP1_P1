@@ -1,10 +1,17 @@
 using Jeremy_Sanchez_AP1_P1.Components;
+using Jeremy_Sanchez_AP1_P1.DAL;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+// Obtenemos el ConStr para usarlo en el contexto
+var ConStr = builder.Configuration.GetConnectionString("SqlConStr");
+
+// Agregamos el contexto al builder con el ConStr
+builder.Services.AddDbContext<Contexto>(o => o.UseSqlServer(ConStr));
 
 var app = builder.Build();
 
