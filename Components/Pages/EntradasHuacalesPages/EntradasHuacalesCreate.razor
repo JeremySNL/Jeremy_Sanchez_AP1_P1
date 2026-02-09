@@ -1,0 +1,63 @@
+﻿@page "/EntradasHuacales/Create";
+
+@inject NavigationManager navigationManager;
+@inject EntradasHuacalesService entradasHuacalesService;
+@inject ToastService toastService;
+
+<PageTitle>CreateEntradasHuacales</PageTitle>
+<EditForm Model="EntradaHuacal" FormName="crearEntradaHuacal" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header text-center">
+                <h3>Crear entrada de huacales</h3>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label"><strong>Fecha</strong></label>
+                    <InputDate class="form-control" @bind-Value="EntradaHuacal.Fecha"></InputDate>
+                    <ValidationMessage For="(() => EntradaHuacal.Fecha)"></ValidationMessage>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><strong>Nombre del cliente</strong></label>
+                    <InputText class="form-control" @bind-Value="EntradaHuacal.NombreCliente" placeholder="Escriba el nombre del cliente..."></InputText>
+                    <ValidationMessage For="(() => EntradaHuacal.NombreCliente)"></ValidationMessage>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><strong>Cantidad</strong></label>
+                    <InputNumber class="form-control" @bind-Value="EntradaHuacal.Cantidad"></InputNumber>
+                    <ValidationMessage For="(() => EntradaHuacal.Cantidad)"></ValidationMessage>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><strong>Precio</strong></label>
+                    <InputNumber class="form-control" @bind-Value="EntradaHuacal.Precio"></InputNumber>
+                    <ValidationMessage For="(() => EntradaHuacal.Precio)"></ValidationMessage>
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <a class="btn btn-secondary" href="/EntradasHuacales/Index"><span class="bi bi-arrow-left"></span> Volver</a>
+                <button class="btn btn-primary" type="submit"><span class="bi bi-floppy"></span> Guardar</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    public EntradasHuacales EntradaHuacal { get; set; } = new EntradasHuacales();
+
+    public async Task Guardar()
+    {
+        bool creado = await entradasHuacalesService.Guardar(EntradaHuacal);
+
+        if (creado)
+        {
+            toastService.ShowSuccess("Entrada de huacales creado exitosamente");
+            navigationManager.NavigateTo("/EntradasHuacales/Index");
+        }
+        else
+        {
+            toastService.ShowError("Ha ocurrido un error inesperado, vuelva a intentarlo mas tarde");
+        }
+    }
+}
