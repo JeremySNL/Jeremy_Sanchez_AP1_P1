@@ -15,8 +15,10 @@ public class EntradasHuacales
     public String NombreCliente { get; set; } = String.Empty;
 
     [Required(ErrorMessage = "La cantidad es obligatoria")]
+    [Range(1, Int32.MaxValue, ErrorMessage = "La cantidad no puede ser negativa")]
     public int Cantidad { get; set; }
 
     [Required(ErrorMessage = "El costo es obligatorio")]
+    [Range(0.01, double.MaxValue, ErrorMessage = "El precio no puede ser negativo")]
     public decimal Precio { get; set; }
 }
