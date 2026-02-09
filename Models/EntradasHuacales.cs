@@ -8,7 +8,7 @@ public class EntradasHuacales
     public int IdEntrada { get; set; }
 
     [Required(ErrorMessage = "La fecha es obligatoria")]
-    public DateTime Fecha { get; set; }
+    public DateTime Fecha { get; set; } = DateTime.Now;
 
     [Required(ErrorMessage = "El nombre del cliente es obligatoria")]
     [StringLength(75, ErrorMessage = "El nombre del cliente tiene un maximo de 75 ")]
