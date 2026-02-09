@@ -12,9 +12,9 @@ builder.Services.AddRazorComponents()
 var ConStr = builder.Configuration.GetConnectionString("SqlConStr");
 
 // Agregamos el contexto al builder con el ConStr
-builder.Services.AddDbContext<Contexto>(o => o.UseSqlServer(ConStr));
+builder.Services.AddDbContextFactory<Contexto>(o => o.UseSqlServer(ConStr));
 
-// builder.Services.AddScoped<ViajesEspacialesService>();
+builder.Services.AddScoped<EntradasHuacalesService>();
 
 // Registra el servicio de BlazorBootstrap
 builder.Services.AddBlazorBootstrap();
