@@ -2,7 +2,7 @@
 
 namespace Jeremy_Sanchez_AP1_P1.Models;
 
-public class ViajesEspaciales
+public class EntradasHuacales
 {
     [Key]
     public int ViajeId { get; set; }

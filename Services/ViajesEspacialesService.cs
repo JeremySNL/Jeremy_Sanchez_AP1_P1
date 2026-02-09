@@ -32,10 +32,10 @@ public class ViajesEspacialesService(IDbContextFactory<Contexto> DbFactory)
     {
         
     }*/
-    public async Task<List<ViajesEspaciales>> Listar(Expression<Func<ViajesEspaciales, bool>> criterio)
+    public async Task<List<EntradasHuacales>> Listar(Expression<Func<EntradasHuacales, bool>> criterio)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
-        return await contexto.ViajesEspaciales.Where(criterio).AsNoTracking().ToListAsync();
+        return await contexto.EntradasHuacales.Where(criterio).AsNoTracking().ToListAsync();
     }
 }
 
