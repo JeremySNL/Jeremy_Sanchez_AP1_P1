@@ -1,14 +1,102 @@
-﻿<h3>Index</h3>
+﻿@page "/EntradasHuacales/Index";
 
-<div class="input-group">
-    <input class="form-control"  placeholder="Buscar..." />
-    <button type="button" class="btn btn-outline-primary bi bi-search" ></button>
+@inject NavigationManager navigationManager;
+@inject EntradasHuacalesService entradasHuacalesService;
+
+<PageTitle>IndexEntradasHuacales</PageTitle>
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header justify-content-between d-flex align-center">
+            <h3>Registro de entradas de huacales</h3>
+            <a class="btn btn-primary"><span class="bi bi-plus-square"></span> Crear</a>
+        </div>
+        <div class="card-body">
+
+            <div class="row">
+                <div class="col-3">
+                    <label class="col-form-label"><strong>Filtro</strong></label>
+                </div>
+                <div class="col-4">
+                    <label class="col-form-label"><strong>B&uacute;squeda</strong></label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-3">
+                    <InputSelect class="form-control" @bind-Value="Filtro">
+                        <option value="" hidden selected disabled>Elija un filtro...</option>
+                        <option value="NombreCliente">Nombre del cliente</option>
+                        <option value="Cantidad">Cantidad</option>
+                        <option value="Precio">Precio</option>
+                    </InputSelect>
+                </div>
+                <div class="col-4">
+                    <div class="input-group">
+                        <InputText class="form-control" @bind-Value="ValorFiltro" placeholder="Buscar..."></InputText>
+                        <button class="btn btn-outline-primary bi bi-search" @onclick="Filtrar"></button>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Fecha</th>
+                        <th>Nombre del cliente</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var entradaHuacal in ListaEntradasHuacales)
+                    {
+                        <tr>
+                            <td>@entradaHuacal.IdEntrada</td>
+                            <td>@entradaHuacal.Fecha</td>
+                            <td>@entradaHuacal.NombreCliente</td>
+                            <td>@entradaHuacal.Cantidad</td>
+                            <td>@entradaHuacal.Precio</td>
+                            <td class="text-center">
+                                <a href="/EntradasHuacales/Edit/@entradaHuacal.IdEntrada" class="btn btn-outline-primary bi bi-pencil-square"></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer">
+            <label>Cantidad: @ListaEntradasHuacales.Count</label>
+        </div>
+    </div>
 </div>
 
-<td class="text-center">
-    <a href="/Estudiante/Edit/" class="btn btn-outline-primary bi bi-pencil-square"></a>
-</td>
-
 @code {
+    public List<EntradasHuacales> ListaEntradasHuacales { get; set; } = new List<EntradasHuacales>();
+    public String Filtro { get; set; } = String.Empty;
+    public String ValorFiltro { get; set; } = String.Empty;
 
+    protected override async Task OnInitializedAsync()
+    {
+        ListaEntradasHuacales = await entradasHuacalesService.Listar(e => e.IdEntrada > 0);
+    }
+
+    public async Task Filtrar()
+    {
+        if (Filtro != "")
+        {
+            if (Filtro == "NombreCliente")
+            {
+                ListaEntradasHuacales = await entradasHuacalesService.Listar(e => e.NombreCliente.Trim().Contains(ValorFiltro));
+            }
+            if (Filtro == "Cantidad")
+            {
+                ListaEntradasHuacales = await entradasHuacalesService.Listar(e => e.Cantidad == Int32.Parse(ValorFiltro));
+            }
+            if (Filtro == "Precio")
+            {
+                ListaEntradasHuacales = await entradasHuacalesService.Listar(e => e.Precio == Decimal.Parse(ValorFiltro));
+            }
+        }
+    }
 }
