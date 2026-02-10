@@ -14,21 +14,28 @@
                 <h3>Crear entrada de huacales</h3>
             </div>
             <div class="card-body">
+                @* Fecha *@
                 <div class="mb-3">
                     <label class="form-label"><strong>Fecha</strong></label>
                     <InputDate class="form-control" @bind-Value="EntradaHuacal.Fecha"></InputDate>
                     <ValidationMessage For="(() => EntradaHuacal.Fecha)"></ValidationMessage>
                 </div>
+
+                @* Nombre del cliente *@
                 <div class="mb-3">
                     <label class="form-label"><strong>Nombre del cliente</strong></label>
                     <InputText class="form-control" @bind-Value="EntradaHuacal.NombreCliente" placeholder="Escriba el nombre del cliente..."></InputText>
                     <ValidationMessage For="(() => EntradaHuacal.NombreCliente)"></ValidationMessage>
                 </div>
+
+                @* Cantidad *@
                 <div class="mb-3">
                     <label class="form-label"><strong>Cantidad</strong></label>
                     <InputNumber class="form-control" @bind-Value="EntradaHuacal.Cantidad"></InputNumber>
                     <ValidationMessage For="(() => EntradaHuacal.Cantidad)"></ValidationMessage>
                 </div>
+
+                @* Precio *@
                 <div class="mb-3">
                     <label class="form-label"><strong>Precio</strong></label>
                     <InputNumber class="form-control" @bind-Value="EntradaHuacal.Precio"></InputNumber>
