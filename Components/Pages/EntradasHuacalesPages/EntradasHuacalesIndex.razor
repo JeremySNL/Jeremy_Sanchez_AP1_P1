@@ -89,6 +89,11 @@
 
     public async Task Filtrar()
     {
+        if (ValorFiltro == "")
+        {
+            ListaEntradasHuacales = await entradasHuacalesService.Listar(e => e.IdEntrada > 0);
+            return;
+        }
         if (Filtro != "")
         {
             if (Filtro == "NombreCliente")
@@ -103,6 +108,10 @@
             {
                 ListaEntradasHuacales = await entradasHuacalesService.Listar(e => e.Precio == Decimal.Parse(ValorFiltro));
             }
+        }
+        else
+        {
+            ListaEntradasHuacales = await entradasHuacalesService.Listar(e => e.IdEntrada > 0);
         }
     }
 }
