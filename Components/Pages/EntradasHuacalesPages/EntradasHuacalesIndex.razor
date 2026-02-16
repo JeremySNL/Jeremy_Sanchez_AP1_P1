@@ -71,8 +71,9 @@
                 </tbody>
             </table>
         </div>
-        <div class="card-footer">
+        <div class="card-footer justify-content-between d-flex">
             <label>Cantidad: @ListaEntradasHuacales.Count</label>
+            <label class="text-success fw-bold">Total: @Total</label>
         </div>
     </div>
 </div>
@@ -81,10 +82,12 @@
     public List<EntradasHuacales> ListaEntradasHuacales { get; set; } = new List<EntradasHuacales>();
     public String Filtro { get; set; } = String.Empty;
     public String ValorFiltro { get; set; } = String.Empty;
+    public decimal Total { get; set; } = 0;
 
     protected override async Task OnInitializedAsync()
     {
         ListaEntradasHuacales = await entradasHuacalesService.Listar(e => e.IdEntrada > 0);
+        await CalcularTotal();
     }
 
     public async Task Filtrar()
@@ -92,6 +95,7 @@
         if (ValorFiltro == "")
         {
             ListaEntradasHuacales = await entradasHuacalesService.Listar(e => e.IdEntrada > 0);
+            await CalcularTotal();
             return;
         }
         if (Filtro != "")
@@ -112,6 +116,15 @@
         else
         {
             ListaEntradasHuacales = await entradasHuacalesService.Listar(e => e.IdEntrada > 0);
+        }
+        await CalcularTotal();
+    }
+
+    public async Task CalcularTotal()
+    {
+        foreach (EntradasHuacales entradaHuacal in ListaEntradasHuacales)
+        {
+            Total += entradaHuacal.Cantidad * entradaHuacal.Precio;
         }
     }
 }
