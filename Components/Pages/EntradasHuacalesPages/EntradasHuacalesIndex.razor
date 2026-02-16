@@ -122,6 +122,7 @@
 
     public async Task CalcularTotal()
     {
+        Total = 0;
         foreach (EntradasHuacales entradaHuacal in ListaEntradasHuacales)
         {
             Total += entradaHuacal.Cantidad * entradaHuacal.Precio;
