@@ -11,66 +11,17 @@
             <a class="btn btn-primary" href="/EntradasHuacales/Create"><span class="bi bi-plus-square"></span> Crear</a>
         </div>
         <div class="card-body">
-
-            <div class="row">
-                @* Filtro *@
-                <div class="col-3">
-                    <label class="col-form-label"><strong>Filtro</strong></label>
-                </div>
-
-                @* Buscar *@
-                <div class="col-4">
-                    <label class="col-form-label"><strong>B&uacute;squeda</strong></label>
-                </div>
+            <QuickGrid class="table table-striped" Items="@ListaEntradasHuacales.AsQueryable()" ItemKey="@(e => e.IdEntrada)">
+                <PropertyColumn Property="@(e => e.IdEntrada)" Sortable="true" Title="Id"></PropertyColumn>
+                <PropertyColumn Property="@(e => e.Fecha)" Format="dd-MM-yyyy hh:mm tt" Sortable="true" Title="Fecha" IsDefaultSortColumn="true" InitialSortDirection="Microsoft.AspNetCore.Components.QuickGrid.SortDirection.Descending"></PropertyColumn>
+                <PropertyColumn Property="@(e => e.NombreCliente)" Sortable="true" Title="Nombre del cliente"></PropertyColumn>
+                <PropertyColumn Property="@(e => e.Cantidad)" Sortable="true" Title="Cantidad"></PropertyColumn>
+                <PropertyColumn Property="@(e => e.Precio)" Sortable="true" Title="Precio"></PropertyColumn>
+                <TemplateColumn Class="text-center" Title="Acciones">
+                    <a href="/EntradasHuacales/Edit/@context.IdEntrada" class="btn btn-outline-primary bi bi-pencil-square"></a>
+                </TemplateColumn>
+            </QuickGrid>
             </div>
-
-            <div class="row">
-                @* Filtrar por *@
-                <div class="col-3">
-                    <InputSelect class="form-control" @bind-Value="Filtro">
-                        <option value="" hidden selected disabled>Elija un filtro...</option>
-                        <option value="NombreCliente">Nombre del cliente</option>
-                        <option value="Cantidad">Cantidad</option>
-                        <option value="Precio">Precio</option>
-                    </InputSelect>
-                </div>
-
-                @* Busqueda *@
-                <div class="col-4">
-                    <div class="input-group">
-                        <InputText class="form-control" @bind-Value="ValorFiltro" placeholder="Buscar..."></InputText>
-                        <button class="btn btn-outline-primary bi bi-search" @onclick="Filtrar"></button>
-                    </div>
-                </div>
-            </div>
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Fecha</th>
-                        <th>Nombre del cliente</th>
-                        <th>Cantidad</th>
-                        <th>Precio</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var entradaHuacal in ListaEntradasHuacales)
-                    {
-                        <tr>
-                            <td>@entradaHuacal.IdEntrada</td>
-                            <td>@entradaHuacal.Fecha</td>
-                            <td>@entradaHuacal.NombreCliente</td>
-                            <td>@entradaHuacal.Cantidad</td>
-                            <td>@entradaHuacal.Precio</td>
-                            <td class="text-center">
-                                <a href="/EntradasHuacales/Edit/@entradaHuacal.IdEntrada" class="btn btn-outline-primary bi bi-pencil-square"></a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
         <div class="card-footer justify-content-between d-flex">
             <label>Cantidad: @ListaEntradasHuacales.Count</label>
             <label class="text-success fw-bold">Total: @Total</label>
