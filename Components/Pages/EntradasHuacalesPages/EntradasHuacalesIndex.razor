@@ -102,13 +102,6 @@
 
     public async Task Filtrar()
     {
-        // if (ValorFiltro == "")
-        // {
-        //     ListaEntradasHuacales = await entradasHuacalesService.Listar(e => e.IdEntrada > 0);
-        //     await CalcularTotal();
-        //     return;
-        // }
-
         Expression<Func<EntradasHuacales, bool>> criterio = e => e.IdEntrada > 0;
 
         if (FechaDesde.HasValue && FechaHasta.HasValue)
@@ -126,8 +119,7 @@
             criterio = criterio.And(e => e.Fecha <= fechaHasta);
         }
 
-
-        if (Filtro != "")
+        if (Filtro != "" && ValorFiltro != "")
         {
             if (Filtro == "NombreCliente")
             {
