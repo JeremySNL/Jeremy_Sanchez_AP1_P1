@@ -26,7 +26,7 @@
             <div class="row">
                 @* InputDate Desde *@
                 <div class="col-3">
-                    <input class="form-control" type="datetime-local" @bind-value="FechaDesde"/>
+                    <input class="form-control" type="datetime-local" @bind-value="FechaDesde" />
                 </div>
 
                 @* InputDate Hasta *@
@@ -50,7 +50,7 @@
             <div class="row">
                 @* Filtrar por *@
                 <div class="col-3">
-                    <InputSelect class="form-control" @bind-Value="Filtro">
+                    <InputSelect class="form-select" @bind-Value="Filtro">
                         <option value="" hidden selected disabled>Elija un filtro...</option>
                         <option value="NombreCliente">Nombre del cliente</option>
                         <option value="Cantidad">Cantidad</option>
@@ -65,16 +65,18 @@
                         <button class="btn btn-outline-primary bi bi-search" @onclick="Filtrar"></button>
                     </div>
                 </div>
-                <QuickGrid class="table table-striped" Items="@ListaEntradasHuacales.AsQueryable()" ItemKey="@(e => e.IdEntrada)">
-                    <PropertyColumn Property="@(e => e.IdEntrada)" Sortable="true" Title="Id"></PropertyColumn>
-                    <PropertyColumn Property="@(e => e.Fecha)" Format="dd-MM-yyyy hh:mm tt" Sortable="true" Title="Fecha" IsDefaultSortColumn="true" InitialSortDirection="Microsoft.AspNetCore.Components.QuickGrid.SortDirection.Descending"></PropertyColumn>
-                    <PropertyColumn Property="@(e => e.NombreCliente)" Sortable="true" Title="Nombre del cliente"></PropertyColumn>
-                    <PropertyColumn Property="@(e => e.Cantidad)" Sortable="true" Title="Cantidad"></PropertyColumn>
-                    <PropertyColumn Property="@(e => e.Precio)" Sortable="true" Title="Precio"></PropertyColumn>
-                    <TemplateColumn Class="text-center" Title="Acciones">
-                        <a href="/EntradasHuacales/Edit/@context.IdEntrada" class="btn btn-outline-primary bi bi-pencil-square"></a>
-                    </TemplateColumn>
-                </QuickGrid>
+                <div class="table-responsive">
+                    <QuickGrid class="table table-striped table-hover" Items="@ListaEntradasHuacales.AsQueryable()" ItemKey="@(e => e.IdEntrada)">
+                        <PropertyColumn Property="@(e => e.IdEntrada)" Sortable="true" Title="Id"></PropertyColumn>
+                        <PropertyColumn Property="@(e => e.Fecha)" Format="dd-MM-yyyy hh:mm tt" Sortable="true" Title="Fecha" IsDefaultSortColumn="true" InitialSortDirection="Microsoft.AspNetCore.Components.QuickGrid.SortDirection.Descending"></PropertyColumn>
+                        <PropertyColumn Property="@(e => e.NombreCliente)" Sortable="true" Title="Nombre del cliente"></PropertyColumn>
+                        <PropertyColumn Property="@(e => e.Cantidad)" Sortable="true" Title="Cantidad"></PropertyColumn>
+                        <PropertyColumn Property="@(e => e.Precio)" Sortable="true" Title="Precio"></PropertyColumn>
+                        <TemplateColumn Class="text-center" Title="Acciones">
+                            <a href="/EntradasHuacales/Edit/@context.IdEntrada" class="btn btn-outline-primary bi bi-pencil-square"></a>
+                        </TemplateColumn>
+                    </QuickGrid>
+                </div>
             </div>
             <div class="card-footer justify-content-between d-flex">
                 <label>Cantidad: @ListaEntradasHuacales.Count</label>
