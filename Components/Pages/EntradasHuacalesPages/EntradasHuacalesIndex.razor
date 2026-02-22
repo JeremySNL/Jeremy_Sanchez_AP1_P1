@@ -11,28 +11,85 @@
             <a class="btn btn-primary" href="/EntradasHuacales/Create"><span class="bi bi-plus-square"></span> Crear</a>
         </div>
         <div class="card-body">
-            <QuickGrid class="table table-striped" Items="@ListaEntradasHuacales.AsQueryable()" ItemKey="@(e => e.IdEntrada)">
-                <PropertyColumn Property="@(e => e.IdEntrada)" Sortable="true" Title="Id"></PropertyColumn>
-                <PropertyColumn Property="@(e => e.Fecha)" Format="dd-MM-yyyy hh:mm tt" Sortable="true" Title="Fecha" IsDefaultSortColumn="true" InitialSortDirection="Microsoft.AspNetCore.Components.QuickGrid.SortDirection.Descending"></PropertyColumn>
-                <PropertyColumn Property="@(e => e.NombreCliente)" Sortable="true" Title="Nombre del cliente"></PropertyColumn>
-                <PropertyColumn Property="@(e => e.Cantidad)" Sortable="true" Title="Cantidad"></PropertyColumn>
-                <PropertyColumn Property="@(e => e.Precio)" Sortable="true" Title="Precio"></PropertyColumn>
-                <TemplateColumn Class="text-center" Title="Acciones">
-                    <a href="/EntradasHuacales/Edit/@context.IdEntrada" class="btn btn-outline-primary bi bi-pencil-square"></a>
-                </TemplateColumn>
-            </QuickGrid>
+            <div class="row">
+                @* Desde *@
+                <div class="col-3">
+                    <label class="col-form-label"><strong>Desde</strong></label>
+                </div>
+
+                @* Hasta *@
+                <div class="col-3">
+                    <label class="col-form-label"><strong>Hasta</strong></label>
+                </div>
             </div>
-        <div class="card-footer justify-content-between d-flex">
-            <label>Cantidad: @ListaEntradasHuacales.Count</label>
-            <label class="text-success fw-bold">Total: @Total</label>
+
+            <div class="row">
+                @* InputDate Desde *@
+                <div class="col-3">
+                    <input class="form-control" type="datetime-local" @bind-value="FechaDesde"/>
+                </div>
+
+                @* InputDate Hasta *@
+                <div class="col-3">
+                    <input class="form-control" type="datetime-local" @bind-value="FechaHasta" />
+                </div>
+            </div>
+
+            <div class="row">
+                @* Filtro *@
+                <div class="col-3">
+                    <label class="col-form-label"><strong>Filtro</strong></label>
+                </div>
+
+                @* Buscar *@
+                <div class="col-4">
+                    <label class="col-form-label"><strong>B&uacute;squeda</strong></label>
+                </div>
+            </div>
+
+            <div class="row">
+                @* Filtrar por *@
+                <div class="col-3">
+                    <InputSelect class="form-control" @bind-Value="Filtro">
+                        <option value="" hidden selected disabled>Elija un filtro...</option>
+                        <option value="NombreCliente">Nombre del cliente</option>
+                        <option value="Cantidad">Cantidad</option>
+                        <option value="Precio">Precio</option>
+                    </InputSelect>
+                </div>
+
+                @* Busqueda *@
+                <div class="col-4">
+                    <div class="input-group">
+                        <InputText class="form-control" @bind-Value="ValorFiltro" placeholder="Buscar..."></InputText>
+                        <button class="btn btn-outline-primary bi bi-search" @onclick="Filtrar"></button>
+                    </div>
+                </div>
+                <QuickGrid class="table table-striped" Items="@ListaEntradasHuacales.AsQueryable()" ItemKey="@(e => e.IdEntrada)">
+                    <PropertyColumn Property="@(e => e.IdEntrada)" Sortable="true" Title="Id"></PropertyColumn>
+                    <PropertyColumn Property="@(e => e.Fecha)" Format="dd-MM-yyyy hh:mm tt" Sortable="true" Title="Fecha" IsDefaultSortColumn="true" InitialSortDirection="Microsoft.AspNetCore.Components.QuickGrid.SortDirection.Descending"></PropertyColumn>
+                    <PropertyColumn Property="@(e => e.NombreCliente)" Sortable="true" Title="Nombre del cliente"></PropertyColumn>
+                    <PropertyColumn Property="@(e => e.Cantidad)" Sortable="true" Title="Cantidad"></PropertyColumn>
+                    <PropertyColumn Property="@(e => e.Precio)" Sortable="true" Title="Precio"></PropertyColumn>
+                    <TemplateColumn Class="text-center" Title="Acciones">
+                        <a href="/EntradasHuacales/Edit/@context.IdEntrada" class="btn btn-outline-primary bi bi-pencil-square"></a>
+                    </TemplateColumn>
+                </QuickGrid>
+            </div>
+            <div class="card-footer justify-content-between d-flex">
+                <label>Cantidad: @ListaEntradasHuacales.Count</label>
+                <label class="text-success fw-bold">Total: @Total</label>
+            </div>
         </div>
     </div>
 </div>
 
 @code {
     public List<EntradasHuacales> ListaEntradasHuacales { get; set; } = new List<EntradasHuacales>();
-    public String Filtro { get; set; } = String.Empty;
     public String ValorFiltro { get; set; } = String.Empty;
+    public String Filtro { get; set; } = String.Empty;
+    public DateTime? FechaDesde { get; set; }
+    public DateTime? FechaHasta { get; set; }
     public decimal Total { get; set; } = 0;
 
     protected override async Task OnInitializedAsync()
@@ -43,31 +100,47 @@
 
     public async Task Filtrar()
     {
-        if (ValorFiltro == "")
+        // if (ValorFiltro == "")
+        // {
+        //     ListaEntradasHuacales = await entradasHuacalesService.Listar(e => e.IdEntrada > 0);
+        //     await CalcularTotal();
+        //     return;
+        // }
+
+        Expression<Func<EntradasHuacales, bool>> criterio = e => e.IdEntrada > 0;
+
+        if (FechaDesde.HasValue && FechaHasta.HasValue)
         {
-            ListaEntradasHuacales = await entradasHuacalesService.Listar(e => e.IdEntrada > 0);
-            await CalcularTotal();
-            return;
+            DateTime fechaHasta = FechaHasta.Value.Date.AddDays(1).AddTicks(-1);
+            criterio = criterio.And(e => e.Fecha >= FechaDesde.Value && e.Fecha <= fechaHasta);
         }
+        else if (FechaDesde.HasValue)
+        {
+            criterio = criterio.And(e => e.Fecha >= FechaDesde.Value);
+        }
+        else if (FechaHasta.HasValue)
+        {
+            var fechaHasta = FechaHasta.Value.Date.AddDays(1).AddTicks(-1);
+            criterio = criterio.And(e => e.Fecha <= fechaHasta);
+        }
+
+
         if (Filtro != "")
         {
             if (Filtro == "NombreCliente")
             {
-                ListaEntradasHuacales = await entradasHuacalesService.Listar(e => e.NombreCliente.Trim().Contains(ValorFiltro));
+                criterio = criterio.And(e => e.NombreCliente.Trim().Contains(ValorFiltro));
             }
             if (Filtro == "Cantidad")
             {
-                ListaEntradasHuacales = await entradasHuacalesService.Listar(e => e.Cantidad == Int32.Parse(ValorFiltro));
+                criterio = criterio.And(e => e.Cantidad == Int32.Parse(ValorFiltro));
             }
             if (Filtro == "Precio")
             {
-                ListaEntradasHuacales = await entradasHuacalesService.Listar(e => e.Precio == Decimal.Parse(ValorFiltro));
+                criterio = criterio.And(e => e.Precio == Decimal.Parse(ValorFiltro));
             }
         }
-        else
-        {
-            ListaEntradasHuacales = await entradasHuacalesService.Listar(e => e.IdEntrada > 0);
-        }
+        ListaEntradasHuacales = await entradasHuacalesService.Listar(criterio);
         await CalcularTotal();
     }
 
