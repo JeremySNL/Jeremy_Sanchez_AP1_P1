@@ -9,7 +9,11 @@ public class EntradasHuacalesService(IDbContextFactory<Contexto> DbFactory)
 {
     public async Task<bool> Guardar(EntradasHuacales entradaHuacal)
     {
-        if (!await Existe(entradaHuacal.IdEntrada))
+        foreach (var detalle in entradaHuacal.DetallesEntradas)
+        {
+            Console.WriteLine(detalle.EntradaId + " - " + detalle.DetalleId + " - " + detalle.Cantidad + " - " + detalle.Precio);
+        }
+        if (!await Existe(entradaHuacal.EntradaId))
         {
             return await Insertar(entradaHuacal);
         }
@@ -22,7 +26,7 @@ public class EntradasHuacalesService(IDbContextFactory<Contexto> DbFactory)
     public async Task<bool> Existe(int idEntrada)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
-        return await contexto.EntradasHuacales.AnyAsync(e => e.IdEntrada == idEntrada);
+        return await contexto.EntradasHuacales.AnyAsync(e => e.EntradaId == idEntrada);
     }
     public async Task<bool> Insertar(EntradasHuacales entradaHuacal)
     {
@@ -39,12 +43,12 @@ public class EntradasHuacalesService(IDbContextFactory<Contexto> DbFactory)
     public async Task<EntradasHuacales?> Buscar(int idEntrada)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
-        return await contexto.EntradasHuacales.FirstOrDefaultAsync(e => e.IdEntrada == idEntrada);
+        return await contexto.EntradasHuacales.Include(e => e.DetallesEntradas).FirstOrDefaultAsync(e => e.EntradaId == idEntrada);
     }
     public async Task<bool> Eliminar(int idEntrada)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
-        return await contexto.EntradasHuacales.Where(e => e.IdEntrada == idEntrada).ExecuteDeleteAsync() > 0;
+        return await contexto.EntradasHuacales.Where(e => e.EntradaId == idEntrada).ExecuteDeleteAsync() > 0;
     }
     public async Task<List<EntradasHuacales>> Listar(Expression<Func<EntradasHuacales, bool>> criterio)
     {
