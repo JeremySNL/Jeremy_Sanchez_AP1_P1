@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Jeremy_Sanchez_AP1_P1.Models;
 
 public class EntradasHuacales
 {
     [Key]
-    public int IdEntrada { get; set; }
+    public int EntradaId { get; set; }
 
     [Required(ErrorMessage = "La fecha es obligatoria")]
     public DateTime Fecha { get; set; } = DateTime.Now;
@@ -18,7 +19,10 @@ public class EntradasHuacales
     [Range(1, Int32.MaxValue, ErrorMessage = "La cantidad no puede ser negativa")]
     public int Cantidad { get; set; }
 
-    [Required(ErrorMessage = "El costo es obligatorio")]
+    [Required(ErrorMessage = "El precio es obligatorio")]
     [Range(0.01, double.MaxValue, ErrorMessage = "El precio no puede ser negativo")]
     public decimal Precio { get; set; }
+
+    [ForeignKey("EntradaId")]
+    public ICollection<DetallesEntradas> DetallesEntradas { get; set; } = new List<DetallesEntradas>();
 }
