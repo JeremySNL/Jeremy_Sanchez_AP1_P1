@@ -1,4 +1,4 @@
-﻿@page "/EntradasHuacales/Edit/{IdEntrada:int}";
+﻿@page "/EntradasHuacales/Edit/{EntradaId:int}";
 
 @inject NavigationManager navigationManager;
 @inject EntradasHuacalesService entradasHuacalesService;
@@ -103,7 +103,7 @@
             <div class="card-footer text-center">
                 <a class="btn btn-secondary" href="/EntradasHuacales/Index"><span class="bi bi-arrow-left"></span> Volver</a>
                 <button class="btn btn-primary" type="submit"><span class="bi bi-floppy"></span> Guardar</button>
-                <button class="btn btn-danger" type="button" @onclick="Eliminar"><span class="bi bi-trash"></span> Eliminar</button>
+                <a class="btn btn-danger" href="/EntradasHuacales/Delete/@EntradaHuacal.EntradaId"><span class="bi bi-trash"></span> Eliminar</a>
             </div>
         </div>
     </div>
@@ -117,11 +117,11 @@
     public decimal Precio { get; set; } = 0;
 
     [Parameter]
-    public int IdEntrada { get; set; }
+    public int EntradaId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        EntradaHuacal = await entradasHuacalesService.Buscar(IdEntrada);
+        EntradaHuacal = await entradasHuacalesService.Buscar(EntradaId);
         TiposHuacales = await tiposHuacalesServices.Listar();
     }
 
