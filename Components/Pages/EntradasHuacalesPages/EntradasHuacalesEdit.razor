@@ -2,6 +2,7 @@
 
 @inject NavigationManager navigationManager;
 @inject EntradasHuacalesService entradasHuacalesService;
+@inject TiposHuacalesServices tiposHuacalesServices;
 @inject ToastService toastService;
 
 <PageTitle>ModificarEntradasHuacales</PageTitle>
@@ -28,18 +29,75 @@
                     <ValidationMessage For="(() => EntradaHuacal.NombreCliente)"></ValidationMessage>
                 </div>
 
-                @* Cantidad *@
-                <div class="mb-3">
-                    <label class="form-label"><strong>Cantidad</strong></label>
-                    <InputNumber class="form-control" @bind-Value="EntradaHuacal.Cantidad"></InputNumber>
-                    <ValidationMessage For="(() => EntradaHuacal.Cantidad)"></ValidationMessage>
-                </div>
+                <div class="border border-success p-3 rounded-3">
+                    <h3>Detalle</h3>
 
-                @* Precio *@
-                <div class="mb-3">
-                    <label class="form-label"><strong>Precio</strong></label>
-                    <InputNumber class="form-control" @bind-Value="EntradaHuacal.Precio"></InputNumber>
-                    <ValidationMessage For="(() => EntradaHuacal.Precio)"></ValidationMessage>
+                    @* Titulos *@
+                    <div class="row">
+                        <div class="col-3">
+                            <label class="form-label"><strong>Tipo huacal</strong></label>
+                        </div>
+                        <div class="col-3">
+                            <label class="form-label"><strong>Cantidad</strong></label>
+                        </div>
+                        <div class="col-3">
+                            <label class="form-label"><strong>Precio</strong></label>
+                        </div>
+                    </div>
+
+                    @* Inputs y botones *@
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <InputSelect class="form-select" @bind-Value="DetalleEntrada.TipoId">
+                                <option value="0" disabled selected hidden>Elija un tipo de huacal...</option>
+                                @foreach (TiposHuacales tipoHuacal in TiposHuacales)
+                                {
+                                    <option value="@tipoHuacal.TipoId">@tipoHuacal.Descripcion</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="col-3">
+                            <input class="form-control" type="number" @bind-value="DetalleEntrada.Cantidad"></input>
+                        </div>
+                        <div class="col-3">
+                            <input class="form-control" type="number" @bind-value="DetalleEntrada.Precio"></input>
+                        </div>
+                        <div class="col-3">
+                            <button class="btn btn-primary" type="button" @onclick="CrearDetalle"><span class="bi bi-plus"></span> Agregar</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <QuickGrid class="table table-striped table-hover" Items="@EntradaHuacal.DetallesEntradas.AsQueryable()">
+                            <TemplateColumn Title="Tipo de huacales" Context="detalle">
+                                @TiposHuacales.Find(t => t.TipoId == detalle.TipoId).Descripcion
+                            </TemplateColumn>
+                            <PropertyColumn Property="@(d => d.Cantidad)" Sortable="true" Title="Cantidad"></PropertyColumn>
+                            <PropertyColumn Property="@(d => d.Precio)" Sortable="true" Title="Precio"></PropertyColumn>
+                            <TemplateColumn Class="text-center" Align="Align.Center" Title="Acciones" Context="detalle">
+                                <button class="btn btn-outline-danger bi bi-trash" type="button" @onclick="() => EliminarDetalle(detalle)"></button>
+                            </TemplateColumn>
+                        </QuickGrid>
+                    </div>
+
+                    <div class="row">
+                        @* Cantiadad *@
+                        <div class="col-3 offset-4">
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Cantidad total</strong></label>
+                                <input class="form-control" @bind-value="EntradaHuacal.Cantidad" disabled></input>
+                                <ValidationMessage For="(() => EntradaHuacal.Cantidad)"></ValidationMessage>
+                            </div>
+                        </div>
+
+                        @* Monto *@
+                        <div class="col-5">
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Monto</strong></label>
+                                <input class="form-control" @bind-value="EntradaHuacal.Precio" disabled></input>
+                                <ValidationMessage For="(() => EntradaHuacal.Precio)"></ValidationMessage>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="card-footer text-center">
@@ -53,6 +111,10 @@
 
 @code {
     public EntradasHuacales EntradaHuacal { get; set; } = new EntradasHuacales();
+    public DetallesEntradas DetalleEntrada { get; set; } = new DetallesEntradas();
+    public List<TiposHuacales> TiposHuacales { get; set; } = new List<TiposHuacales>();
+    public int Cantidad { get; set; } = 0;
+    public decimal Precio { get; set; } = 0;
 
     [Parameter]
     public int IdEntrada { get; set; }
@@ -60,12 +122,18 @@
     protected override async Task OnInitializedAsync()
     {
         EntradaHuacal = await entradasHuacalesService.Buscar(IdEntrada);
+        TiposHuacales = await tiposHuacalesServices.Listar();
     }
 
     public async Task Modificar()
     {
-        bool modificado = await entradasHuacalesService.Guardar(EntradaHuacal);
+        if (EntradaHuacal.DetallesEntradas.Count == 0)
+        {
+            toastService.ShowWarning("Debe agregar al menos un detalle");
+            return;
+        }
 
+        bool modificado = await entradasHuacalesService.Guardar(EntradaHuacal);
         if (modificado)
         {
             toastService.ShowSuccess("Entrada de huacales modificado exitosamente");
@@ -79,7 +147,7 @@
 
     public async Task Eliminar()
     {
-        bool eliminado = await entradasHuacalesService.Eliminar(EntradaHuacal.IdEntrada);
+        bool eliminado = await entradasHuacalesService.Eliminar(EntradaHuacal.EntradaId);
 
         if (eliminado)
         {
@@ -90,5 +158,40 @@
         {
             toastService.ShowError("Ha ocurrido un error inesperado, vuelva a intentarlo mas tarde");
         }
+    }
+
+    public async Task CrearDetalle()
+    {
+        if (DetalleEntrada.TipoId <= 0)
+        {
+            toastService.ShowWarning("Debes elegir un tipo de huacal");
+            return;
+        }
+        if (DetalleEntrada.Cantidad <= 0)
+        {
+            toastService.ShowWarning("La cantidad de huacales deben ser mayor que 0");
+            return;
+        }
+        if (DetalleEntrada.Precio <= 0)
+        {
+            toastService.ShowWarning("El precio de los huacales deben ser mayor que 0");
+            return;
+        }
+
+        DetalleEntrada.EntradaId = EntradaHuacal.EntradaId;
+        EntradaHuacal.Precio += DetalleEntrada.Precio * DetalleEntrada.Cantidad;
+        EntradaHuacal.DetallesEntradas.Add(DetalleEntrada);
+        DetalleEntrada = new DetallesEntradas();
+        await Task.CompletedTask; // Investigar despues
+    }
+
+    public async Task EliminarDetalle(DetallesEntradas DetalleEliminado)
+    {
+        DetalleEntrada.Cantidad = DetalleEliminado.Cantidad;
+        DetalleEntrada.Precio = DetalleEliminado.Precio;
+        DetalleEntrada.TipoId = DetalleEliminado.TipoId;
+        EntradaHuacal.Precio -= DetalleEliminado.Precio * DetalleEliminado.Cantidad;
+        EntradaHuacal.DetallesEntradas.Remove(DetalleEliminado);
+        await Task.CompletedTask; // Investigar despues
     }
 }
