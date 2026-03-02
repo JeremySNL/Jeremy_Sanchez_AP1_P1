@@ -71,7 +71,7 @@
                     <PropertyColumn Property="@(e => e.EntradaId)" Sortable="true" Title="Id"></PropertyColumn>
                     <PropertyColumn Property="@(e => e.Fecha)" Format="dd-MM-yyyy hh:mm tt" Sortable="true" Title="Fecha" IsDefaultSortColumn="true" InitialSortDirection="Microsoft.AspNetCore.Components.QuickGrid.SortDirection.Descending"></PropertyColumn>
                     <PropertyColumn Property="@(e => e.NombreCliente)" Sortable="true" Title="Nombre del cliente"></PropertyColumn>
-                    <PropertyColumn Property="@(e => e.Precio)" Sortable="true" Title="Monto"></PropertyColumn>
+                    <PropertyColumn Property="@(e => e.Precio)" Sortable="true" Title="Monto" Format="N2"></PropertyColumn>
                     <TemplateColumn Class="text-center" Title="Acciones">
                         <a href="/EntradasHuacales/Edit/@context.EntradaId" class="btn btn-outline-primary bi bi-pencil-square"></a>
                     </TemplateColumn>

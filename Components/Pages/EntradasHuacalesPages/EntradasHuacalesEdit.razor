@@ -72,7 +72,7 @@
                                 @TiposHuacales.Find(t => t.TipoId == detalle.TipoId).Descripcion
                             </TemplateColumn>
                             <PropertyColumn Property="@(d => d.Cantidad)" Sortable="true" Title="Cantidad"></PropertyColumn>
-                            <PropertyColumn Property="@(d => d.Precio)" Sortable="true" Title="Precio"></PropertyColumn>
+                            <PropertyColumn Property="@(d => d.Precio)" Sortable="true" Title="Precio" Format="N2"></PropertyColumn>
                             <TemplateColumn Class="text-center" Align="Align.Center" Title="Acciones" Context="detalle">
                                 <button class="btn btn-outline-danger bi bi-trash" type="button" @onclick="() => EliminarDetalle(detalle)"></button>
                             </TemplateColumn>
