@@ -47,7 +47,7 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row mb-2">
                 @* Filtrar por *@
                 <div class="col-3">
                     <InputSelect class="form-select" @bind-Value="Filtro">
@@ -65,23 +65,22 @@
                         <button class="btn btn-outline-primary bi bi-search" @onclick="Filtrar"></button>
                     </div>
                 </div>
-                <div class="table-responsive">
-                    <QuickGrid class="table table-striped table-hover" Items="@ListaEntradasHuacales.AsQueryable()" ItemKey="@(e => e.IdEntrada)">
-                        <PropertyColumn Property="@(e => e.IdEntrada)" Sortable="true" Title="Id"></PropertyColumn>
-                        <PropertyColumn Property="@(e => e.Fecha)" Format="dd-MM-yyyy hh:mm tt" Sortable="true" Title="Fecha" IsDefaultSortColumn="true" InitialSortDirection="Microsoft.AspNetCore.Components.QuickGrid.SortDirection.Descending"></PropertyColumn>
-                        <PropertyColumn Property="@(e => e.NombreCliente)" Sortable="true" Title="Nombre del cliente"></PropertyColumn>
-                        <PropertyColumn Property="@(e => e.Cantidad)" Sortable="true" Title="Cantidad"></PropertyColumn>
-                        <PropertyColumn Property="@(e => e.Precio)" Sortable="true" Title="Precio"></PropertyColumn>
-                        <TemplateColumn Class="text-center" Title="Acciones">
-                            <a href="/EntradasHuacales/Edit/@context.IdEntrada" class="btn btn-outline-primary bi bi-pencil-square"></a>
-                        </TemplateColumn>
-                    </QuickGrid>
-                </div>
             </div>
-            <div class="card-footer justify-content-between d-flex">
-                <label>Cantidad: @ListaEntradasHuacales.Count</label>
-                <label class="text-success fw-bold">Total: @Total</label>
+            <div class="table-responsive">
+                <QuickGrid class="table table-striped table-hover" Items="@ListaEntradasHuacales.AsQueryable()" ItemKey="@(e => e.EntradaId)">
+                    <PropertyColumn Property="@(e => e.EntradaId)" Sortable="true" Title="Id"></PropertyColumn>
+                    <PropertyColumn Property="@(e => e.Fecha)" Format="dd-MM-yyyy hh:mm tt" Sortable="true" Title="Fecha" IsDefaultSortColumn="true" InitialSortDirection="Microsoft.AspNetCore.Components.QuickGrid.SortDirection.Descending"></PropertyColumn>
+                    <PropertyColumn Property="@(e => e.NombreCliente)" Sortable="true" Title="Nombre del cliente"></PropertyColumn>
+                    <PropertyColumn Property="@(e => e.Precio)" Sortable="true" Title="Monto" Format="N2"></PropertyColumn>
+                    <TemplateColumn Class="text-center" Title="Acciones">
+                        <a href="/EntradasHuacales/Edit/@context.EntradaId" class="btn btn-outline-primary bi bi-pencil-square"></a>
+                    </TemplateColumn>
+                </QuickGrid>
             </div>
+        </div>
+        <div class="card-footer justify-content-between d-flex p-3">
+            <label>Cantidad: @ListaEntradasHuacales.Count</label>
+            <label class="text-success fw-bold">Total: @Total</label>
         </div>
     </div>
 </div>
@@ -96,13 +95,13 @@
 
     protected override async Task OnInitializedAsync()
     {
-        ListaEntradasHuacales = await entradasHuacalesService.Listar(e => e.IdEntrada > 0);
+        ListaEntradasHuacales = await entradasHuacalesService.Listar(e => e.EntradaId > 0);
         await CalcularTotal();
     }
 
     public async Task Filtrar()
     {
-        Expression<Func<EntradasHuacales, bool>> criterio = e => e.IdEntrada > 0;
+        Expression<Func<EntradasHuacales, bool>> criterio = e => e.EntradaId > 0;
 
         if (FechaDesde.HasValue && FechaHasta.HasValue)
         {
@@ -143,7 +142,7 @@
         Total = 0;
         foreach (EntradasHuacales entradaHuacal in ListaEntradasHuacales)
         {
-            Total += entradaHuacal.Cantidad * entradaHuacal.Precio;
+            Total += entradaHuacal.Precio;
         }
     }
 }

@@ -4,6 +4,7 @@ using Jeremy_Sanchez_AP1_P1.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jeremy_Sanchez_AP1_P1.Migrations
 {
     [DbContext(typeof(Contexto))]
-    partial class ContextoModelSnapshot : ModelSnapshot
+    [Migration("20260224143913_DetalleV1")]
+    partial class DetalleV1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,8 +49,6 @@ namespace Jeremy_Sanchez_AP1_P1.Migrations
 
                     b.HasIndex("EntradaId");
 
-                    b.HasIndex("TipoId");
-
                     b.ToTable("DetallesEntradas");
                 });
 
@@ -78,46 +79,6 @@ namespace Jeremy_Sanchez_AP1_P1.Migrations
                     b.ToTable("EntradasHuacales");
                 });
 
-            modelBuilder.Entity("Jeremy_Sanchez_AP1_P1.Models.TiposHuacales", b =>
-                {
-                    b.Property<int>("TipoId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TipoId"));
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Existencia")
-                        .HasColumnType("int");
-
-                    b.HasKey("TipoId");
-
-                    b.ToTable("TiposHuacales");
-
-                    b.HasData(
-                        new
-                        {
-                            TipoId = 1,
-                            Descripcion = "Huacales Verdes",
-                            Existencia = 0
-                        },
-                        new
-                        {
-                            TipoId = 2,
-                            Descripcion = "Huacales Rojos",
-                            Existencia = 0
-                        },
-                        new
-                        {
-                            TipoId = 3,
-                            Descripcion = "Huacales Amarillos",
-                            Existencia = 0
-                        });
-                });
-
             modelBuilder.Entity("Jeremy_Sanchez_AP1_P1.Models.DetallesEntradas", b =>
                 {
                     b.HasOne("Jeremy_Sanchez_AP1_P1.Models.EntradasHuacales", null)
@@ -125,20 +86,9 @@ namespace Jeremy_Sanchez_AP1_P1.Migrations
                         .HasForeignKey("EntradaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Jeremy_Sanchez_AP1_P1.Models.TiposHuacales", null)
-                        .WithMany("DetallesEntradas")
-                        .HasForeignKey("TipoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Jeremy_Sanchez_AP1_P1.Models.EntradasHuacales", b =>
-                {
-                    b.Navigation("DetallesEntradas");
-                });
-
-            modelBuilder.Entity("Jeremy_Sanchez_AP1_P1.Models.TiposHuacales", b =>
                 {
                     b.Navigation("DetallesEntradas");
                 });
