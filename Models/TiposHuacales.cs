@@ -12,7 +12,7 @@ public class TiposHuacales
     public string Descripcion { get; set; } = string.Empty;
 
     [Range(0, int.MaxValue)]
-    public int Existencia { get; set; }
+    public int Existencia { get; set; } = 0;
 
     [ForeignKey("TipoId")]
     public ICollection<DetallesEntradas> DetallesEntradas { get; set; } = new List<DetallesEntradas>();
