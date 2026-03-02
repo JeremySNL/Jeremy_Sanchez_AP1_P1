@@ -180,6 +180,7 @@
 
         DetalleEntrada.EntradaId = EntradaHuacal.EntradaId;
         EntradaHuacal.Precio += DetalleEntrada.Precio * DetalleEntrada.Cantidad;
+        EntradaHuacal.Cantidad += DetalleEntrada.Cantidad;
         EntradaHuacal.DetallesEntradas.Add(DetalleEntrada);
         DetalleEntrada = new DetallesEntradas();
         await Task.CompletedTask; // Investigar despues
@@ -191,6 +192,7 @@
         DetalleEntrada.Precio = DetalleEliminado.Precio;
         DetalleEntrada.TipoId = DetalleEliminado.TipoId;
         EntradaHuacal.Precio -= DetalleEliminado.Precio * DetalleEliminado.Cantidad;
+        EntradaHuacal.Cantidad -= DetalleEntrada.Cantidad;
         EntradaHuacal.DetallesEntradas.Remove(DetalleEliminado);
         await Task.CompletedTask; // Investigar despues
     }
